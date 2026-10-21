@@ -2,9 +2,11 @@
 
 **Penulis:** [Boy Cristoper](https://github.com/boycristoper)
 
+**Repository:** [cybersecurity-home-lab-portfolio](https://github.com/boycristoper/cybersecurity-home-lab-portfolio)
+
 **Fokus:** fondasi SOC/blue team, analisis paket, dokumentasi bukti
 
-**Status:** paket latihan dan analisis referensi sintetis tersedia; praktik VM dan analisis GUI pribadi masih perlu dikerjakan.
+**Status:** starter project telah dipublikasikan di GitHub; analisis referensi menggunakan data sintetis. Praktik VM dan analisis GUI pribadi masih perlu dikerjakan.
 
 Mini project ini menggabungkan dua kegiatan yang saling mendukung:
 

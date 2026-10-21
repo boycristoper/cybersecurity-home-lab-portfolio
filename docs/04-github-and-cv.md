@@ -1,8 +1,8 @@
 # 04 — GitHub dan CV
 
-Profil penulis: [boycristoper](https://github.com/boycristoper). Nama repository yang disarankan: `cybersecurity-home-lab-portfolio`.
+Profil penulis: [boycristoper](https://github.com/boycristoper). Repository: [cybersecurity-home-lab-portfolio](https://github.com/boycristoper/cybersecurity-home-lab-portfolio).
 
-Status saat paket disusun: file lokal tersedia. Repository GitHub **belum dibuat/diunggah melalui panduan ini**. Tautan repo publik belum boleh disebut aktif sebelum unggah terverifikasi. Integrasi GitHub dapat digunakan setelah pemasangan/koneksi akun dikonfirmasi.
+Status publikasi: starter project tersedia di [GitHub](https://github.com/boycristoper/cybersecurity-home-lab-portfolio) sebagai repository publik. Praktik VM, capture langsung dan analisis GUI pribadi masih perlu dikerjakan. Bagian unggah di bawah disimpan sebagai referensi jika kamu membuat proyek lain atau memperbarui repository.
 
 ## Apa yang layak dipublikasikan sekarang?
 
