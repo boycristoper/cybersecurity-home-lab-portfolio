@@ -1,0 +1,124 @@
+{
+  "file": "synthetic-reference.pcap",
+  "provenance_label": "synthetic-reference",
+  "sha256": "239f4a867e088150aa60806609902a355e38923ceb0e32a468aa30e224b90130",
+  "frame_count": 38,
+  "duration_seconds": 4.01,
+  "first_packet_utc": "2026-01-01T00:00:00+00:00",
+  "last_packet_utc": "2026-01-01T00:00:04.010000+00:00",
+  "protocol_counts_exclusive": {
+    "ARP": 2,
+    "ICMP": 4,
+    "TCP": 32
+  },
+  "ip_addresses": [
+    "192.168.77.10",
+    "192.168.77.20"
+  ],
+  "initial_syn_count": 6,
+  "distinct_syn_destination_ports": [
+    21,
+    22,
+    80,
+    445,
+    3306,
+    9999
+  ],
+  "tcp_connection_observations": [
+    {
+      "source": "192.168.77.10",
+      "destination": "192.168.77.20",
+      "source_port": 51000,
+      "destination_port": 80,
+      "syn_frame": 7,
+      "syn_ack_frames": [
+        8
+      ],
+      "reset_frames": [],
+      "observation": "SYN/ACK observed"
+    },
+    {
+      "source": "192.168.77.10",
+      "destination": "192.168.77.20",
+      "source_port": 52000,
+      "destination_port": 21,
+      "syn_frame": 17,
+      "syn_ack_frames": [
+        18
+      ],
+      "reset_frames": [],
+      "observation": "SYN/ACK observed"
+    },
+    {
+      "source": "192.168.77.10",
+      "destination": "192.168.77.20",
+      "source_port": 52001,
+      "destination_port": 22,
+      "syn_frame": 23,
+      "syn_ack_frames": [
+        24
+      ],
+      "reset_frames": [],
+      "observation": "SYN/ACK observed"
+    },
+    {
+      "source": "192.168.77.10",
+      "destination": "192.168.77.20",
+      "source_port": 52002,
+      "destination_port": 445,
+      "syn_frame": 29,
+      "syn_ack_frames": [],
+      "reset_frames": [
+        30
+      ],
+      "observation": "RST/ACK observed"
+    },
+    {
+      "source": "192.168.77.10",
+      "destination": "192.168.77.20",
+      "source_port": 52003,
+      "destination_port": 3306,
+      "syn_frame": 31,
+      "syn_ack_frames": [
+        32
+      ],
+      "reset_frames": [],
+      "observation": "SYN/ACK observed"
+    },
+    {
+      "source": "192.168.77.10",
+      "destination": "192.168.77.20",
+      "source_port": 52004,
+      "destination_port": 9999,
+      "syn_frame": 37,
+      "syn_ack_frames": [],
+      "reset_frames": [
+        38
+      ],
+      "observation": "RST/ACK observed"
+    }
+  ],
+  "http_message_starts": [
+    {
+      "frame": 10,
+      "source": "192.168.77.10",
+      "destination": "192.168.77.20",
+      "start_line": "GET / HTTP/1.1"
+    },
+    {
+      "frame": 12,
+      "source": "192.168.77.20",
+      "destination": "192.168.77.10",
+      "start_line": "HTTP/1.1 200 OK"
+    }
+  ],
+  "checksum_failures": [],
+  "limitations": [
+    "Provenance label is supplied by the caller, not independently verified.",
+    "Classic PCAP/Ethernet/IPv4 only; no VLAN, IPv6, UDP/DNS decoding or stream/fragment reassembly.",
+    "SYN entries count packets, not deduplicated attempts; reused tuples can be ambiguous.",
+    "Port numbers do not identify applications; SYN/ACK is an observed response, not proof of a service version.",
+    "A scan-like pattern is not proof of an attacker. Check context and authorization.",
+    "Checksum offload can affect checksums in real captures; errors alone do not establish malicious traffic."
+  ]
+}
