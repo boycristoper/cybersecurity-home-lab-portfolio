@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>LABSCAN · Mini Vulnerability Scanner</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Langsung ke pemeriksaan</a>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="LABSCAN, halaman utama">
+        <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 4.5 6v5.5c0 4 3 7.1 7.5 9.5 4.5-2.4 7.5-5.5 7.5-9.5V6L12 3Z"/><path d="m8.5 12 2.3 2.3 4.7-5"/></svg></span>
+        <span>LAB<span class="brand-accent">SCAN</span></span>
+      </a>
+      <span class="local-badge"><span aria-hidden="true"></span> Lab lokal · Python</span>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">BELAJAR MENEMUKAN, MEMAHAMI, MEMPERBAIKI</p>
+          <h1 id="page-title">Mini Vulnerability<br class="wide-break"> Scanner<span class="title-dot">.</span></h1>
+          <p class="hero-copy">Pemeriksaan dasar layanan web di lab sendiri. Lihat konfigurasi yang perlu ditinjau, pahami buktinya, lalu pelajari perbaikannya.</p>
+        </div>
+        <aside class="scope-card" aria-label="Lingkup pemeriksaan">
+          <span class="scope-symbol" aria-hidden="true">01</span>
+          <p class="eyebrow">SATU LAYANAN, SATU PEMERIKSAAN</p>
+          <p>Koneksi TCP, respons HTTP, header keamanan, dan atribut cookie.</p>
+          <span class="scope-note">Tanpa eksploitasi atau penelusuran halaman.</span>
+        </aside>
+      </section>
+
+      <section class="panel setup-panel" aria-labelledby="setup-title">
+        <div class="panel-heading">
+          <div><p class="eyebrow">01 / TENTUKAN LAYANAN</p><h2 id="setup-title">Mulai dari lab latihan</h2></div>
+          <span id="connection-status" class="connection-status" role="status">Menghubungkan…</span>
+        </div>
+        <form id="scan-form">
+          <fieldset id="scan-fields" disabled>
+            <legend class="sr-only">Konfigurasi pemeriksaan layanan</legend>
+            <div class="fields-grid">
+              <div class="field target-field">
+                <span class="field-label" id="target-label">Target yang diizinkan</span>
+                <div class="target-value" aria-labelledby="target-label"><span class="target-dot" aria-hidden="true"></span><code id="target-host">—</code><span class="fixed-tag">Tetap</span></div>
+                <p class="field-hint">Ditetapkan saat aplikasi dijalankan.</p>
+              </div>
+              <div class="field"><label for="scheme">Protokol web</label><select id="scheme" name="scheme"><option value="http">HTTP</option><option value="https">HTTPS</option></select><p class="field-hint">Pilih sesuai layanan target.</p></div>
+              <div class="field"><label for="port">Port layanan</label><input id="port" name="port" type="number" min="1" max="65535" step="1" value="8771" required inputmode="numeric" autocomplete="off" spellcheck="false"><p class="field-hint">Satu angka: 1–65535.</p></div>
+            </div>
+            <div class="example-row"><span class="example-label">Isi dari contoh:</span><button type="button" id="demo-initial" class="chip" disabled>Lab awal <span>· 8771</span></button><button type="button" id="demo-improved" class="chip" disabled>Header ditambah <span>· 8772</span></button></div>
+            <p class="demo-note" id="demo-note">Memeriksa ketersediaan dua layanan latihan…</p>
+            <div class="action-row"><button type="submit" class="button primary" id="scan-button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg><span id="scan-button-label">Jalankan pemeriksaan</span></button><p>Satu permintaan halaman utama.<br>Tidak mengikuti pengalihan.</p></div>
+          </fieldset>
+        </form>
+        <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
+      </section>
+
+      <div id="empty-state" class="empty-state"><span class="empty-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M11 5H6a1 1 0 0 0-1 1v5m16-6h5a1 1 0 0 1 1 1v5M5 21v5a1 1 0 0 0 1 1h5m16-6v5a1 1 0 0 1-1 1h-5M11 16h10m-5-5v10"/></svg></span><h2>Hasil yang bisa kamu jelaskan.</h2><p>Pilih <strong>Lab awal</strong>, lalu jalankan pemeriksaan. Setelah itu bandingkan dengan <strong>Header ditambah</strong> untuk melihat perubahan konfigurasinya.</p></div>
+
+      <section id="results" class="results" aria-labelledby="results-title" hidden>
+        <div class="results-heading"><div><p class="eyebrow">02 / BACA HASILNYA</p><h2 id="results-title" tabindex="-1">Ringkasan pemeriksaan</h2><p id="scan-time" class="muted"></p></div><div class="report-actions"><button id="export-button" type="button" class="button secondary">Unduh laporan JSON <span aria-hidden="true">↓</span></button><button id="clear-button" type="button" class="text-button">Bersihkan hasil</button></div></div>
+        <div class="endpoint-strip"><div><span class="mini-label">LAYANAN YANG DIPERIKSA</span><code id="endpoint-url">—</code></div><div class="transport-group"><span id="tcp-state" class="transport-tag">TCP —</span><span id="http-state" class="transport-tag">HTTP —</span><span id="tls-state" class="transport-tag">TLS —</span></div></div>
+        <div class="summary-grid" aria-label="Jumlah hasil menurut kategori">
+          <article class="summary-card review"><span class="summary-mark" aria-hidden="true">!</span><p>Perlu ditinjau</p><strong id="count-review">0</strong><span>Indikator untuk dipelajari</span></article>
+          <article class="summary-card observed"><span class="summary-mark" aria-hidden="true">✓</span><p>Kontrol terlihat</p><strong id="count-observed">0</strong><span>Konfigurasi teramati</span></article>
+          <article class="summary-card info"><span class="summary-mark" aria-hidden="true">i</span><p>Informasi</p><strong id="count-info">0</strong><span>Konteks layanan target</span></article>
+          <article class="summary-card not-checked"><span class="summary-mark" aria-hidden="true">—</span><p>Belum diperiksa</p><strong id="count-not-checked">0</strong><span>Tidak berlaku / data kurang</span></article>
+        </div>
+        <div class="notice"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9v1"/></svg><p id="result-notice">Temuan adalah indikator konfigurasi, bukan bukti bahwa suatu celah dapat dieksploitasi.</p></div>
+        <div class="findings-heading"><h3>Detail &amp; langkah perbaikan</h3><div class="filters" role="group" aria-label="Filter detail pemeriksaan"><button type="button" id="filter-all" class="filter active" aria-pressed="true">Semua</button><button type="button" id="filter-review" class="filter" aria-pressed="false">Perlu ditinjau</button></div></div>
+        <div id="findings-list" class="findings-list"></div>
+        <p id="no-findings" class="no-findings" hidden>Tidak ada indikator pada kategori ini. Baca juga hasil lainnya dan batas pemeriksaan.</p>
+      </section>
+
+      <section class="learning-panel" aria-labelledby="learning-title"><div class="learning-heading"><p class="eyebrow">PAHAMI ALATNYA</p><h2 id="learning-title">Apa arti hasil pemeriksaan?</h2><p>Angka membantu merangkum. Bukti dan konteks menjelaskan artinya.</p></div><div class="learning-items">
+        <details><summary>Apa beda TCP, HTTP, dan TLS?<span aria-hidden="true">+</span></summary><div><p><strong>TCP</strong> menunjukkan apakah layanan menerima koneksi pada port pilihan. Port terbuka dapat menjadi bagian normal dari sistem.</p><p><strong>HTTP</strong> adalah cara browser dan layanan web bertukar permintaan serta respons. Nomor status HTTP menjelaskan respons yang diterima.</p><p><strong>TLS</strong> mengenkripsi koneksi HTTPS. Pemeriksaan HTTPS menggunakan verifikasi sertifikat; aplikasi tidak melewati kegagalan verifikasi.</p></div></details>
+        <details><summary>“Kontrol terlihat” berarti apa?<span aria-hidden="true">+</span></summary><div><p>Scanner menemukan header atau atribut yang dicari pada satu respons. Keberadaan header belum membuktikan kebijakannya efektif untuk seluruh aplikasi.</p><p>“Perlu ditinjau” adalah alasan untuk memeriksa konfigurasi lebih lanjut. Jumlah tersebut bukan jumlah CVE, tingkat risiko keseluruhan, atau persentase keamanan.</p></div></details>
+        <details><summary>Bagaimana membandingkan dua lab?<span aria-hidden="true">+</span></summary><div><p>Periksa port <strong>8771</strong>, baca detail, lalu unduh laporannya. Selanjutnya pilih port <strong>8772</strong> dan ulangi.</p><p>Layanan kedua menambahkan beberapa header dan atribut cookie. Keduanya tetap menggunakan HTTP lokal; perubahan header saja tidak menyediakan enkripsi HTTPS.</p></div></details>
+        <details><summary>Apa saja batas pemeriksaannya?<span aria-hidden="true">+</span></summary><div><p>Satu alamat IP yang ditetapkan saat aplikasi dimulai, satu port, dan halaman utama saja. Tidak ada login, pemindaian subnet, penelusuran tautan, pengujian eksploitasi, atau pencocokan versi dengan database CVE.</p><p>Cookie dibaca untuk atributnya; nilainya tidak dimasukkan ke hasil. Laporan diunduh atas tindakanmu, tanpa penyimpanan otomatis di browser.</p></div></details>
+      </div></section>
+    </main>
+    <footer><span>LABSCAN <span class="footer-separator">/</span> Proyek belajar Boy Cristoper</span><p>Amati konfigurasi. Pahami bukti. Catat batasnya.</p></footer>
+  </div>
+</body>
+</html>

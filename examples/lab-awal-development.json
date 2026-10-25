@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "scanned_at": "2026-10-25T12:09:00+00:00",
+  "target": {
+    "host": "127.0.0.1",
+    "port": 8771,
+    "scheme": "http",
+    "url": "http://127.0.0.1:8771/"
+  },
+  "transport": {
+    "tcp": "open",
+    "tls": "not_checked",
+    "http_status": 200
+  },
+  "summary": {
+    "review": 5,
+    "observed": 1,
+    "info": 3,
+    "not_checked": 1
+  },
+  "checks": [
+    {
+      "id": "tcp",
+      "status": "observed",
+      "title": "Koneksi TCP",
+      "evidence": "Koneksi TCP berhasil ke satu port yang dipilih.",
+      "meaning": "Ada layanan yang menerima koneksi; port terbuka sendiri bukan kerentanan.",
+      "recommendation": "Cocokkan layanan dengan inventaris dan kebutuhan lab."
+    },
+    {
+      "id": "transport",
+      "status": "info",
+      "title": "Transport HTTP / HTTPS",
+      "evidence": "HTTP tanpa TLS pada loopback latihan.",
+      "meaning": "HTTP tidak mengenkripsi trafik. Demo loopback memang memakai HTTP; ini bukan contoh transport produksi yang aman.",
+      "recommendation": "Gunakan HTTPS terverifikasi untuk layanan sensitif di jaringan."
+    },
+    {
+      "id": "http",
+      "status": "info",
+      "title": "Respons HTTP",
+      "evidence": "HTTP 200; hanya header respons ini diperiksa.",
+      "meaning": "Kode respons menjelaskan respons endpoint, bukan tingkat keamanan seluruh aplikasi.",
+      "recommendation": "Pastikan respons ini adalah halaman yang hendak dipelajari."
+    },
+    {
+      "id": "csp",
+      "status": "review",
+      "title": "Content Security Policy (CSP)",
+      "evidence": "Header CSP tidak terlihat pada respons ini.",
+      "meaning": "CSP dapat membatasi sumber konten yang boleh dimuat browser; kehadirannya saja belum cukup.",
+      "recommendation": "Susun dan uji kebijakan sesuai kebutuhan aplikasi; hindari menyalin kebijakan tanpa pengujian."
+    },
+    {
+      "id": "frame",
+      "status": "review",
+      "title": "Pembatasan framing",
+      "evidence": "X-Frame-Options DENY/SAMEORIGIN atau direktif frame-ancestors tidak terlihat.",
+      "meaning": "Pembatasan framing membantu mengendalikan halaman yang boleh menampilkan aplikasi dalam frame.",
+      "recommendation": "Tinjau kebutuhan frame-ancestors atau X-Frame-Options dan uji integrasi yang memang dibutuhkan."
+    },
+    {
+      "id": "nosniff",
+      "status": "review",
+      "title": "X-Content-Type-Options",
+      "evidence": "Nilai tunggal nosniff tidak terlihat.",
+      "meaning": "nosniff meminta browser mengikuti tipe konten yang dideklarasikan; tipe konten tetap perlu benar.",
+      "recommendation": "Gunakan Content-Type yang sesuai dan tinjau X-Content-Type-Options: nosniff."
+    },
+    {
+      "id": "referrer",
+      "status": "review",
+      "title": "Referrer-Policy",
+      "evidence": "Nilai pembatas yang dikenali alat ini tidak terlihat; browser dapat memiliki nilai bawaan.",
+      "meaning": "Kebijakan ini mengatur informasi asal halaman yang dikirim browser saat berpindah halaman.",
+      "recommendation": "Pilih kebijakan sesuai privasi dan kebutuhan aplikasi; tinjau konteks sebelum menyebutnya celah."
+    },
+    {
+      "id": "hsts",
+      "status": "not_checked",
+      "title": "HTTP Strict Transport Security (HSTS)",
+      "evidence": "Target menggunakan HTTP; HSTS tidak dinilai dari koneksi ini.",
+      "meaning": "Browser mempelajari HSTS melalui HTTPS yang valid; header lewat HTTP tidak menyelesaikan masalah transport.",
+      "recommendation": "Gunakan HTTPS yang terverifikasi ketika mempelajari penerapan HSTS."
+    },
+    {
+      "id": "cookies",
+      "status": "review",
+      "title": "Atribut cookie",
+      "evidence": "1 cookie terbaca; tanpa Secure: 1; tanpa HttpOnly: 1; SameSite tidak jelas: 1; header tidak terbaca: 0. Nilai dan nama cookie tidak disertakan.",
+      "meaning": "Atribut hanya diamati secara sintaksis; kegunaan cookie dan perilaku browser belum diuji.",
+      "recommendation": "Tinjau kebutuhan HttpOnly/SameSite; cookie sensitif memerlukan Secure dan HTTPS yang benar."
+    },
+    {
+      "id": "banner",
+      "status": "info",
+      "title": "Informasi banner server",
+      "evidence": "Header Server terlihat; nilai disembunyikan dalam ringkasan.",
+      "meaning": "Banner hanya informasi yang diklaim server; tidak membuktikan software, versi sebenarnya, atau CVE.",
+      "recommendation": "Tinjau inventaris dan pembaruan server dari sistem milik sendiri; jangan menyimpulkan celah dari banner."
+    }
+  ],
+  "notice": "Pemeriksaan konfigurasi web terbatas pada satu respons GET /. Temuan perlu ditinjau; header yang ada tidak membuktikan sistem aman. Tidak ada pencarian CVE, eksploitasi, login, crawl, atau pengalihan."
+}

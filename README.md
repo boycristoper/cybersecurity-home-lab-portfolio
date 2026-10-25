@@ -1,89 +1,81 @@
-# Cybersecurity Home Lab & Packet Analysis
+# Mini Vulnerability Scanner — LABSCAN
 
-**Penulis:** [Boy Cristoper](https://github.com/boycristoper)
+Aplikasi Python untuk memeriksa konfigurasi dasar **satu layanan web di lab sendiri**, lalu menampilkan bukti, penjelasan, dan saran perbaikan dalam dashboard lokal.
 
-**Repository:** [cybersecurity-home-lab-portfolio](https://github.com/boycristoper/cybersecurity-home-lab-portfolio)
+Proyek belajar [Boy Cristoper](https://github.com/boycristoper). Python 3.10+ dan standard library; tanpa paket pip, API key, atau layanan analisis eksternal.
 
-**Fokus:** fondasi SOC/blue team, analisis paket, dokumentasi bukti
+![Pratinjau dashboard LABSCAN](preview-development.jpg)
 
-**Status:** starter project telah dipublikasikan di GitHub; analisis referensi menggunakan data sintetis. Praktik VM dan analisis GUI pribadi masih perlu dikerjakan.
+*Pratinjau pengujian pengembangan di Windows menggunakan layanan demo loopback. Ini bukan bukti praktik Boy di Kali atau temuan pada sistem produksi.*
 
-Mini project ini menggabungkan dua kegiatan yang saling mendukung:
+## Fungsi
 
-1. Membangun lab VirtualBox dengan Kali Linux dan Metasploitable 2 pada jaringan internal terisolasi.
-2. Merekam dan menganalisis ARP, ICMP, HTTP serta pola koneksi TCP menggunakan Wireshark.
+- Memeriksa konektivitas satu port TCP dan respons HTTP.
+- Memverifikasi koneksi HTTPS memakai pemeriksaan sertifikat bawaan Python.
+- Mengamati CSP, pengaturan frame, nosniff, Referrer-Policy, serta konteks HSTS.
+- Merangkum atribut cookie tanpa menampilkan nama atau nilainya.
+- Menjelaskan bukti, arti hasil, dan saran untuk setiap pemeriksaan.
+- Membandingkan dua layanan demo dan mengekspor laporan JSON.
 
-Repository juga menyediakan **PCAP sintetis** untuk latihan awal tanpa VM. File ini dibuat oleh script lokal, bukan rekaman VM yang benar-benar berjalan. Angka dan frame pada laporan referensi hanya berlaku untuk dataset tersebut. Tidak ada eksploitasi, pencurian kredensial atau serangan ke jaringan publik dalam latihan ini.
+Port terbuka sendiri bukan celah. Header yang terlihat belum membuktikan kebijakannya efektif. Jumlah indikator bukan jumlah kerentanan terkonfirmasi.
 
-## Mulai dari sini
+## Mulai cepat
 
-| Tahap | Panduan / hasil |
+Jalankan di Terminal Linux/Kali:
+
+```bash
+git clone https://github.com/boycristoper/cybersecurity-home-lab-portfolio.git
+cd cybersecurity-home-lab-portfolio
+python3 -m unittest discover -s tests -v
+python3 app.py --with-demo
+```
+
+Di Windows, gunakan `python` jika perintah `python3` tidak tersedia. Tes yang berhasil berakhir dengan `OK`.
+
+Buka **http://127.0.0.1:8770** di browser pada mesin yang menjalankan Python. Biarkan terminal server terbuka; tekan `Ctrl+C` untuk berhenti.
+
+1. Pilih **Lab awal · 8771**, lalu klik **Jalankan pemeriksaan**.
+2. Baca bukti, arti, dan saran. Unduh laporan JSON.
+3. Pilih **Header ditambah · 8772**, lalu periksa dan bandingkan.
+
+## Membaca hasil
+
+| Kategori | Makna |
 |---|---|
-| 1. Pahami dataset contoh | [Laporan referensi](reports/reference-analysis.md) dan [manifest](samples/manifest.json) |
-| 2. Buka contoh di Wireshark | [Workbook analisis](docs/03-analysis-workbook.md) |
-| 3. Siapkan lab sendiri | [VirtualBox + Kali + Metasploitable](docs/01-home-lab.md) |
-| 4. Rekam traffic sendiri | [Panduan capture](docs/02-capture-lab.md) |
-| 5. Tulis hasil pengamatanmu | [Template laporan praktik](reports/my-lab-analysis-template.md) |
-| 6. Siapkan GitHub dan CV | [Publikasi dan kalimat CV](docs/04-github-and-cv.md) |
+| Perlu ditinjau | Indikator konfigurasi yang memerlukan pemeriksaan konteks |
+| Kontrol terlihat | Konfigurasi atau atribut yang dicari teramati |
+| Informasi | Fakta pendukung tentang layanan |
+| Belum diperiksa | Bukti belum tersedia atau pemeriksaan tidak berlaku |
 
-## Quick start tanpa VM
+Dalam uji pengembangan, profil awal memiliki **5 indikator perlu ditinjau**, sedangkan profil pembanding **1**. Kedua layanan tetap memakai HTTP; cookie pembanding masih belum memiliki `Secure`. Hasil tersebut menunjukkan perbedaan konfigurasi, bukan jaminan keamanan.
 
-Python 3.10+ digunakan untuk script pendamping; tidak perlu paket pip. Script generator dan analyzer hanya membaca/menulis file lokal. Jalankan dari folder repo:
+## Dokumentasi
 
-```powershell
-python scripts/generate_reference.py
-python scripts/analyze_pcap.py samples/synthetic-reference.pcap --label synthetic-reference --json reports/reference-summary.json --csv reports/reference-frames.csv
-python -m unittest discover -s tests -v
-```
+- [Panduan praktik dan arti istilah](PANDUAN.md)
+- [Hasil pengujian pengembangan](TESTING.md)
+- [Template laporan praktik pribadi](LAPORAN-TEMPLATE.md)
+- [Contoh laporan dan asal datanya](examples/README.md)
 
-Di Linux/Kali ganti `python` dengan `python3`. Buka `samples/synthetic-reference.pcap` memakai Wireshark, lalu kerjakan workbook. Analyzer Python hanya pendamping terbatas, tidak menggantikan decoding atau analisis Wireshark. Script probe jaringan adalah script terpisah yang hanya dipakai pada tahap lab terisolasi.
+| Berkas | Peran |
+|---|---|
+| `scanner.py` | Koneksi terbatas dan aturan interpretasi hasil |
+| `app.py` | Dashboard lokal dan API |
+| `demo_lab.py` | Dua layanan HTTP latihan |
+| `static/` | Tampilan dan interaksi browser |
+| `tests/` | Pengujian aturan, jaringan sintetis, dan HTTP lokal |
 
-Hasil yang diharapkan: **38 frame**, ARP 2, ICMP 4, TCP 32; HTTP adalah dua pesan di dalam TCP sehingga tidak ditambahkan lagi ke total protokol. Capture menggunakan waktu skenario tetap **1 Januari 2026 UTC**, bukan tanggal pelaksanaan praktik penulis.
+## Lingkup
 
-## Topologi lab yang direncanakan
+Target bawaan adalah `127.0.0.1`. Satu pemeriksaan meminta `GET /` dari satu layanan; redirect tidak diikuti. Target dapat ditetapkan saat startup sebagai satu IPv4 literal loopback/RFC1918 milik sendiri atau berizin. Tidak ada penemuan jaringan, audit seluruh sistem operasi, login, payload eksploit, atau pencocokan CVE.
 
-```mermaid
-flowchart LR
-    K["Kali Linux\n192.168.77.10/24\nWireshark / dumpcap"] --- N["VirtualBox Internal Network\nlabnet\nTanpa gateway"]
-    N --- M["Metasploitable 2\n192.168.77.20/24\nTarget latihan lokal"]
-```
+Laporan tidak memuat isi halaman atau nilai cookie, tetapi tetap menyebut alamat dan konteks layanan. Periksa hasil sebelum membagikannya. Pengamatan HSTS pada IP literal hanya menyangkut sintaks header; browser menerapkan HSTS pada hostname.
 
-Capture dilakukan dari Kali. Internal Network tidak memberikan akses langsung dari host Windows, LAN atau internet. Konfigurasi ini masih perlu kamu buktikan melalui screenshot dan pemeriksaan rute saat menjalankan lab.
+## Status dan kontribusi
 
-## Pertanyaan analisis
+Kode awal, tes, dan dokumentasi disiapkan dengan bantuan AI. **22 tes lulus pada Windows/Python 3.12.10**; rincian dan batasnya tersedia di [TESTING.md](TESTING.md). Hasil praktik Boy di Kali belum dicatat. Template laporan disediakan untuk pengamatan dan penjelasan pribadi setelah praktik.
 
-- Bagaimana ARP menemukan alamat MAC target sebelum komunikasi IPv4?
-- Di frame mana handshake TCP terjadi?
-- Apa yang dapat dan tidak dapat disimpulkan dari HTTP plaintext?
-- Bagaimana membedakan SYN/ACK, RST/ACK, dan tidak adanya respons?
-- Mengapa beberapa koneksi ke port berbeda belum cukup membuktikan adanya penyerang?
+## Rujukan
 
-## Struktur
-
-```text
-docs/       Panduan praktik, workbook, GitHub dan CV
-samples/    PCAP sintetis yang aman dipublikasikan + asal-usul/frame manifest
-scripts/    Generator offline, analyzer terbatas, probe target lab tetap
-reports/    Hasil contoh terverifikasi + template hasil praktik pribadi
-evidence/   Bukti nyata pribadi; file mentah diabaikan Git secara default
-tests/      Pemeriksaan integritas format, checksum, parser dan kesimpulan contoh
-```
-
-## Batas klaim portofolio
-
-- **Dikerjakan dalam penyusunan paket:** generator, dataset sintetis, analyzer dan dokumentasi contoh.
-- **Belum menjadi pengalaman pribadi penulis:** konfigurasi dua VM, capture langsung, screenshot Wireshark dan analisis hasil lab sendiri.
-- Setelah praktik, isi laporan baru dengan output dan bukti sebenarnya. Sesuaikan status README dan gunakan kalimat CV yang sesuai tahapmu.
-
-Catatan pendampingan: starter project ini disusun dengan bantuan AI. Boy Cristoper perlu menjalankan, meninjau dan menjelaskan kembali analisisnya sebelum mengklaim penguasaan pada CV. Kontribusi pribadi selanjutnya dicatat pada [log belajar](LEARNING_LOG.md).
-
-## Referensi utama
-
-- [VirtualBox: networking modes](https://docs.oracle.com/en/virtualization/virtualbox/7.2/user/networkingdetails.html)
-- [Kali: prebuilt VirtualBox image](https://www.kali.org/docs/virtualization/import-premade-virtualbox/)
-- [Rapid7: Metasploitable 2](https://docs.rapid7.com/metasploit/metasploitable-2/)
-- [Wireshark: display filters](https://www.wireshark.org/docs/man-pages/wireshark-filter)
-- [Wireshark: dumpcap](https://www.wireshark.org/docs/man-pages/dumpcap.html)
-- [Wireshark: TShark](https://www.wireshark.org/docs/man-pages/tshark.html)
-- [IETF: PCAP format draft](https://datatracker.ietf.org/doc/html/draft-ietf-opsawg-pcap-09)
-- [RFC 1071: Internet checksum](https://datatracker.ietf.org/doc/html/rfc1071)
+- [OWASP HTTP Headers Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html)
+- [OWASP Session Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
+- [RFC 6797: HSTS](https://www.rfc-editor.org/rfc/rfc6797.html#section-8.1)

@@ -1,0 +1,124 @@
+# Panduan Mini Vulnerability Scanner
+
+Tujuanmu: membaca respons web, menemukan konfigurasi yang perlu ditinjau, dan membandingkan perubahan. Kode awal dibantu AI; hasil praktik Boy dicatat setelah dilakukan.
+
+## 1. Pahami lingkungan latihan
+
+Jalankan perintah di **Terminal Kali di VirtualBox**. Python sebelumnya sudah tersedia; tidak perlu instalasi tambahan.
+
+Satu proses menyediakan tiga layanan lokal:
+
+| Alamat di Kali | Peran |
+|---|---|
+| `http://127.0.0.1:8770` | Dashboard pemeriksa |
+| `http://127.0.0.1:8771` | Lab awal: sejumlah header belum dipasang |
+| `http://127.0.0.1:8772` | Pembanding: sejumlah header dan atribut cookie ditambah |
+
+`127.0.0.1` menunjuk Kali sendiri. **Port** adalah nomor pintu layanan: satu mesin memiliki beberapa pintu. Tidak perlu VM tambahan atau perubahan adapter jaringan.
+
+## 2. Ambil dan jalankan proyek
+
+Jika mengambil proyek dari GitHub, jalankan:
+
+```bash
+git clone https://github.com/boycristoper/cybersecurity-home-lab-portfolio.git
+cd cybersecurity-home-lab-portfolio
+python3 -m unittest discover -s tests -v
+python3 app.py --with-demo
+```
+
+Fungsi setiap baris:
+
+- `git clone` mengambil salinan repo beserta riwayatnya.
+- `cd` memindahkan terminal ke folder proyek.
+- `unittest discover` menjalankan tes; ringkasan sukses berakhir dengan `OK`.
+- `app.py --with-demo` menyalakan dashboard dan dua layanan latihan. Pemeriksaan baru berjalan setelah tombol dashboard diklik.
+
+Buka browser pada mesin yang menjalankan Python dan ketik `http://127.0.0.1:8770`. Di latihan Boy, ini berarti Firefox di VM Kali. Biarkan terminal server terbuka. Tekan `Ctrl+C` untuk berhenti; untuk sesi berikutnya, masuk lagi ke folder repo dan jalankan `python3 app.py --with-demo`.
+
+**Alternatif khusus lingkungan Boy:** jika memakai ZIP dari folder bersama Windows yang sudah disiapkan, jalankan:
+
+```bash
+mkdir -p ~/projects
+python3 -m zipfile -e /media/sf_KaliTransfer/mini-vulnerability-scanner-portfolio.zip ~/projects
+cd ~/projects/mini-vulnerability-scanner
+python3 -m unittest discover -s tests -v
+python3 app.py --with-demo
+```
+
+`mkdir -p` menyiapkan folder, sedangkan `zipfile -e` mengekstrak ZIP ke penyimpanan Kali. Pilih salah satu cara pengambilan proyek yang sesuai. Pengguna Windows dapat mengganti `python3` dengan `python` bila diperlukan.
+
+## 3. Periksa lab awal
+
+Klik **Lab awal · 8771**, lalu **Jalankan pemeriksaan**. Target IP ditetapkan oleh server; tombol mengisi protokol dan port.
+
+Program meminta `/` dari satu layanan dan membaca header dengan batas ukuran/waktu. Tidak ada redirect, percobaan password, atau eksploit. Memilih HTTPS tidak membuat layanan HTTP mendukung TLS.
+
+Baca **bukti**, **arti**, dan **saran** pada setiap pemeriksaan. Catat hasil aktual, bukan angka contoh.
+
+## 4. Arti tampilan dan istilah
+
+| Bagian | Penjelasan |
+|---|---|
+| Target, protokol, port | Satu alamat dan layanan yang diperiksa; bukan seluruh jaringan |
+| Waktu pemeriksaan | Waktu snapshot; perubahan berikutnya memerlukan pemeriksaan baru |
+| TCP | Menunjukkan apakah koneksi ke port berhasil. Port terbuka sendiri bukan celah |
+| HTTP status | Kode respons layanan, misalnya 200. Kode sukses tidak membuktikan keamanan |
+| TLS/HTTPS | Pemeriksaan koneksi terenkripsi dan kepercayaan sertifikat. Sertifikat gagal tidak diabaikan |
+| Perlu ditinjau | Indikator konfigurasi yang memerlukan pemeriksaan konteks |
+| Kontrol terlihat | Kontrol yang diperiksa terlihat pada respons, tanpa jaminan efektivitas menyeluruh |
+| Informasi | Fakta pendukung yang belum merupakan kelemahan |
+| Belum diperiksa | Tidak berlaku atau tidak tersedia; jangan dianggap lulus |
+
+Ringkasan menghitung kategori pemeriksaan, bukan nilai keamanan, tingkat keparahan CVE, atau jumlah serangan.
+
+Makna pemeriksaan web:
+
+- **CSP — Content Security Policy:** kebijakan sumber konten browser. Proyek mengamati keberadaannya; tidak menilai seluruh isi kebijakan.
+- **Perlindungan frame:** mengamati `X-Frame-Options` atau direktif CSP `frame-ancestors`, yang berkaitan dengan penanaman halaman dalam frame.
+- **X-Content-Type-Options:** nilai `nosniff` membantu browser mengikuti tipe konten yang dinyatakan.
+- **Referrer-Policy:** mengatur informasi asal halaman yang dapat disertakan pada permintaan berikutnya.
+- **HSTS — HTTP Strict Transport Security:** kebijakan penggunaan HTTPS; tidak dinilai dari HTTP biasa. Browser menerapkan HSTS pada hostname, bukan IP literal. Pada target IP proyek ini, kehadiran header hanya diamati secara sintaksis.
+- **Cookie:** `HttpOnly` membatasi akses JavaScript, `Secure` membatasi pengiriman melalui HTTPS, dan `SameSite` mengatur pengiriman dalam konteks lintas situs. Program melaporkan atribut secara ringkas tanpa nilai cookie.
+- **Server banner:** informasi identitas layanan. Banner saja tidak cukup untuk menetapkan produk rentan atau CVE tertentu.
+
+## 5. Bandingkan dengan layanan 8772
+
+Unduh hasil awal, lalu periksa **Header ditambah · 8772**. Bandingkan aturan yang berubah menjadi **Kontrol terlihat** dan alasannya.
+
+Pada layanan pembanding, CSP, perlindungan frame, `nosniff`, dan kebijakan referrer ditambahkan. Cookie dummy juga mendapat `HttpOnly` serta `SameSite=Lax`. Keduanya tetap memakai HTTP dan cookie tidak memiliki `Secure`. Karena itu, penambahan header tidak membuat seluruh aspek keamanan selesai. Pada loopback, HTTP diberi konteks latihan; HSTS tidak diperiksa sebagai kontrol HTTPS.
+
+Jika target tidak merespons, hasil yang benar adalah koneksi gagal dan pemeriksaan terkait belum dilakukan, bukan kesimpulan bahwa target aman.
+
+## 6. Simpan bukti dan laporan
+
+Gunakan fitur unduh JSON untuk masing-masing hasil. Ringkasan tidak menyertakan nilai cookie atau isi halaman, tetapi tetap memuat alamat target dan konteks layanan; tinjau sebelum publikasi.
+
+Simpan screenshot:
+
+1. Hasil lab awal beserta target dan waktu.
+2. Hasil pembanding serta satu aturan yang berubah.
+3. Ringkasan tes `OK` dari praktik Kali.
+
+Isi [LAPORAN-TEMPLATE.md](LAPORAN-TEMPLATE.md) dengan hasil aktual. [TESTING.md](TESTING.md) mencatat pengujian pengembangan asisten, terpisah dari praktikmu.
+
+Setelah praktik dan mampu menjelaskan hasil, contoh CV: “Proyek pribadi: menguji pemeriksa konfigurasi layanan web berbasis Python, membandingkan header HTTP dan atribut cookie pada lab lokal, serta mendokumentasikan temuan dan keterbatasannya.” Sesuaikan kontribusi nyata dan jelaskan bantuan AI secara jujur.
+
+Contoh caption setelah praktik: “Belajar membaca respons layanan web melalui mini scanner lokal. Saya membandingkan dua konfigurasi dan memahami batas interpretasi port terbuka serta header. Latihan ini tanpa eksploitasi.”
+
+## 7. Jika ada kendala
+
+| Gejala | Tindakan |
+|---|---|
+| ZIP tidak ditemukan | Buka `/media/sf_KaliTransfer` dan periksa nama ZIP serta ketersediaan folder bersama |
+| `Address already in use` | Periksa apakah proyek yang sama masih berjalan di terminal lain. Hentikan proses proyek tersebut dengan `Ctrl+C`, lalu jalankan lagi; jangan mematikan layanan yang tidak dikenal |
+| Dashboard terbuka, demo tidak tersedia | Jalankan aplikasi dengan `--with-demo`; baca pesan terminal jika port demo dipakai proses lain |
+| Koneksi ditolak/tidak merespons | Periksa port, protokol, dan apakah layanan latihan berjalan. Timeout tidak cukup membedakan layanan mati dari penyaringan jaringan |
+| Sertifikat HTTPS gagal | Gunakan layanan HTTPS lab dengan sertifikat terpercaya dan identitas yang sesuai. Jangan menonaktifkan verifikasi untuk mengubah hasil menjadi sukses |
+| Target ditolak | Opsi `--target` hanya menerima satu IPv4 literal loopback/RFC1918. Untuk latihan ini tetap gunakan `127.0.0.1`; jangan memakai IP lama yang belum diverifikasi |
+
+Opsi `--port` mengubah port dashboard saja. Target lab lain memerlukan alamat dan izin jelas; tidak ada scan subnet atau target publik.
+
+Pertanyaan untuk memastikan pemahaman: Mengapa port terbuka belum membuktikan celah? Mengapa CSP yang terlihat belum membuktikan kebijakannya efektif? Apa yang masih belum selesai pada layanan 8772 walaupun header ditambah?
+
+Rujukan: [OWASP HTTP Headers](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html), [OWASP Session Management](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html), dan [RFC 6797 tentang HSTS](https://www.rfc-editor.org/rfc/rfc6797.html#section-8.1).
