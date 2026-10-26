@@ -1,81 +1,56 @@
-# Mini Vulnerability Scanner — LABSCAN
+# Portofolio Mini Project Cybersecurity
 
-Aplikasi Python untuk memeriksa konfigurasi dasar **satu layanan web di lab sendiri**, lalu menampilkan bukti, penjelasan, dan saran perbaikan dalam dashboard lokal.
+**Boy Cristoper** · Fresh graduate Teknik Informatika · Pembelajaran cybersecurity melalui WPU dan praktik lab Kali Linux.
 
-Proyek belajar [Boy Cristoper](https://github.com/boycristoper). Python 3.10+ dan standard library; tanpa paket pip, API key, atau layanan analisis eksternal.
+Lima proyek pribadi untuk mempelajari data DNS, indikator phishing, monitoring jaringan, pemeriksaan password, dan konfigurasi layanan web. Portofolio ini mencatat fungsi alat dan kontribusi praktik yang benar-benar dilakukan. Kode awal disiapkan dengan bantuan AI.
 
-![Pratinjau dashboard LABSCAN](preview-development.jpg)
+## Proyek pilihan
 
-*Pratinjau pengujian pengembangan di Windows menggunakan layanan demo loopback. Ini bukan bukti praktik Boy di Kali atau temuan pada sistem produksi.*
+| Proyek | Fungsi | Status praktik Boy |
+|---|---|---|
+| [OSINT Domain Dashboard](osint-domain-dashboard/README.md) | Menampilkan record DNS publik, TTL, sumber, dan waktu pengambilan | Dashboard lima tipe record sudah diperlihatkan di Kali |
+| [Phishing Email Detector](phishing-email-detector/README.md) | Triase indikator pada email latihan secara offline | Versi dasar dua indikator diuji dengan dua email fiktif |
+| [Network Monitoring Dashboard](network-monitoring-dashboard/README.md) | Memantau laju RX/TX dan ringkasan socket TCP/UDP lokal | Dashboard, ping loopback 10/10, dan lima tes sudah diperlihatkan di Kali |
+| [Password Strength Checker](password-strength-checker/README.md) | Menjelaskan kelemahan umum password latihan | Folder tersedia di Kali; praktik aplikasinya belum tercatat |
+| [Mini Vulnerability Scanner](mini-vulnerability-scanner/README.md) | Memeriksa konfigurasi dasar satu layanan web lab | Folder tersedia di Kali; praktik pemindaian belum tercatat |
 
-## Fungsi
+Status diperbarui **26 Oktober 2026**. Screenshot daftar folder mengonfirmasi kelima direktori ada di Kali; keberadaan folder belum membuktikan seluruh kode sudah dijalankan. Rangkuman pribadi dan laporan praktik masih dapat dilengkapi.
 
-- Memeriksa konektivitas satu port TCP dan respons HTTP.
-- Memverifikasi koneksi HTTPS memakai pemeriksaan sertifikat bawaan Python.
-- Mengamati CSP, pengaturan frame, nosniff, Referrer-Policy, serta konteks HSTS.
-- Merangkum atribut cookie tanpa menampilkan nama atau nilainya.
-- Menjelaskan bukti, arti hasil, dan saran untuk setiap pemeriksaan.
-- Membandingkan dua layanan demo dan mengekspor laporan JSON.
-
-Port terbuka sendiri bukan celah. Header yang terlihat belum membuktikan kebijakannya efektif. Jumlah indikator bukan jumlah kerentanan terkonfirmasi.
-
-## Mulai cepat
-
-Jalankan di Terminal Linux/Kali:
+## Mulai dari GitHub
 
 ```bash
 git clone https://github.com/boycristoper/cybersecurity-home-lab-portfolio.git
 cd cybersecurity-home-lab-portfolio
-python3 -m unittest discover -s tests -v
-python3 app.py --with-demo
 ```
 
-Di Windows, gunakan `python` jika perintah `python3` tidak tersedia. Tes yang berhasil berakhir dengan `OK`.
+Masuk ke **satu folder proyek** dan ikuti README di dalamnya. Semua proyek memakai Python standar tanpa paket pip. Dashboard monitoring jaringan membutuhkan Linux karena membaca `/proc`. Pencarian DNS langsung membutuhkan internet; mode demo OSINT dan contoh email bekerja offline.
 
-Buka **http://127.0.0.1:8770** di browser pada mesin yang menjalankan Python. Biarkan terminal server terbuka; tekan `Ctrl+C` untuk berhenti.
+| Folder proyek | Perintah awal dari dalam folder | Hasil |
+|---|---|---|
+| `osint-domain-dashboard` | `python3 build_dashboard.py --demo` | Berkas HTML dengan data fiktif berlabel demo |
+| `phishing-email-detector` | `python3 quick_detector.py samples/contoh-perlu-ditinjau.eml` | Alasan triase pada contoh fiktif |
+| `network-monitoring-dashboard` | `python3 app.py` | Dashboard di `http://127.0.0.1:8765` |
+| `password-strength-checker` | `python3 app.py` | Dashboard di `http://127.0.0.1:8766` |
+| `mini-vulnerability-scanner` | `python3 app.py --with-demo` | Dashboard di `http://127.0.0.1:8770` beserta dua layanan latihan |
 
-1. Pilih **Lab awal · 8771**, lalu klik **Jalankan pemeriksaan**.
-2. Baca bukti, arti, dan saran. Unduh laporan JSON.
-3. Pilih **Header ditambah · 8772**, lalu periksa dan bandingkan.
+Alamat loopback dibuka pada mesin yang menjalankan aplikasi. Di Windows, gunakan `python` jika `python3` tidak tersedia. Tekan `Ctrl+C` di terminal server untuk berhenti.
 
-## Membaca hasil
+## Pengujian dan dokumentasi
 
-| Kategori | Makna |
-|---|---|
-| Perlu ditinjau | Indikator konfigurasi yang memerlukan pemeriksaan konteks |
-| Kontrol terlihat | Konfigurasi atau atribut yang dicari teramati |
-| Informasi | Fakta pendukung tentang layanan |
-| Belum diperiksa | Bukti belum tersedia atau pemeriksaan tidak berlaku |
+Jalankan seluruh suite dalam proses terpisah dari root repo:
 
-Dalam uji pengembangan, profil awal memiliki **5 indikator perlu ditinjau**, sedangkan profil pembanding **1**. Kedua layanan tetap memakai HTTP; cookie pembanding masih belum memiliki `Secure`. Hasil tersebut menunjukkan perbedaan konfigurasi, bukan jaminan keamanan.
+```bash
+python3 scripts/check_projects.py
+```
 
-## Dokumentasi
+Perintah ini menjalankan tes yang sudah disediakan setiap proyek. Tes OSINT memakai respons tiruan; tes HTTP memakai loopback lokal. Hasil tes pengembangan tidak menggantikan praktik Boy di Kali.
 
-- [Panduan praktik dan arti istilah](PANDUAN.md)
-- [Hasil pengujian pengembangan](TESTING.md)
-- [Template laporan praktik pribadi](LAPORAN-TEMPLATE.md)
-- [Contoh laporan dan asal datanya](examples/README.md)
+- [Status dan sumber verifikasi](STATUS-PROYEK.md)
+- [Validasi susunan portofolio](VALIDASI.md)
+- [Bagian mini project untuk CV](cv/PROYEK-CV.md)
 
-| Berkas | Peran |
-|---|---|
-| `scanner.py` | Koneksi terbatas dan aturan interpretasi hasil |
-| `app.py` | Dashboard lokal dan API |
-| `demo_lab.py` | Dua layanan HTTP latihan |
-| `static/` | Tampilan dan interaksi browser |
-| `tests/` | Pengujian aturan, jaringan sintetis, dan HTTP lokal |
+## Lingkup kontribusi
 
-## Lingkup
+Proyek ini adalah pembelajaran pribadi, bukan pengalaman kerja profesional. Praktik yang sudah ditunjukkan meliputi menjalankan kode di Kali, melihat hasil DNS, menguji email fiktif, dan mengamati statistik jaringan. Password checker serta scanner dicatat sebagai proyek dalam pembelajaran sampai praktiknya diperlihatkan.
 
-Target bawaan adalah `127.0.0.1`. Satu pemeriksaan meminta `GET /` dari satu layanan; redirect tidak diikuti. Target dapat ditetapkan saat startup sebagai satu IPv4 literal loopback/RFC1918 milik sendiri atau berizin. Tidak ada penemuan jaringan, audit seluruh sistem operasi, login, payload eksploit, atau pencocokan CVE.
-
-Laporan tidak memuat isi halaman atau nilai cookie, tetapi tetap menyebut alamat dan konteks layanan. Periksa hasil sebelum membagikannya. Pengamatan HSTS pada IP literal hanya menyangkut sintaks header; browser menerapkan HSTS pada hostname.
-
-## Status dan kontribusi
-
-Kode awal, tes, dan dokumentasi disiapkan dengan bantuan AI. **22 tes lulus pada Windows/Python 3.12.10**; rincian dan batasnya tersedia di [TESTING.md](TESTING.md). Hasil praktik Boy di Kali belum dicatat. Template laporan disediakan untuk pengamatan dan penjelasan pribadi setelah praktik.
-
-## Rujukan
-
-- [OWASP HTTP Headers Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html)
-- [OWASP Session Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
-- [RFC 6797: HSTS](https://www.rfc-editor.org/rfc/rfc6797.html#section-8.1)
+Laporan tidak menyatakan email pasti aman, password pasti kuat, atau sistem bebas celah. Pengujian dilakukan pada contoh latihan dan layanan lokal. Screenshot yang memuat percakapan pribadi tidak dimasukkan ke repo.

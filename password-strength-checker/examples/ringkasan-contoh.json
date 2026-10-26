@@ -1,0 +1,41 @@
+{
+  "project": "Password Strength Checker — latihan lokal",
+  "generated_at": "2026-10-25T07:08:46.911Z",
+  "status": "limited_pass",
+  "label": "Lolos pemeriksaan terbatas",
+  "length_nfc_codepoints": 27,
+  "rules": [
+    {
+      "id": "length",
+      "label": "Panjang sesuai profil latihan",
+      "passed": true,
+      "detail": "Memenuhi panjang profil latihan ini."
+    },
+    {
+      "id": "blocklist",
+      "label": "Tidak cocok dengan daftar contoh lokal",
+      "passed": true,
+      "detail": "Tidak cocok dengan seluruh entri daftar contoh yang kecil."
+    },
+    {
+      "id": "repetition",
+      "label": "Tidak ada pengulangan penuh sederhana",
+      "passed": true,
+      "detail": "Aturan ini tidak menemukan pengulangan penuh sederhana."
+    },
+    {
+      "id": "sequence",
+      "label": "Tidak ada urutan sederhana yang dikenali",
+      "passed": true,
+      "detail": "Aturan ini tidak menemukan urutan contoh yang dikenali."
+    }
+  ],
+  "reasons": [
+    "Tidak ditemukan indikator dari empat aturan yang tersedia."
+  ],
+  "suggestions": [
+    "Untuk akun nyata, gunakan password unik; password manager dapat membantu.",
+    "Contoh publik dalam proyek ini hanya untuk latihan, bukan untuk akun sungguhan."
+  ],
+  "notice": "Hasil ini hanya pemeriksaan aturan lokal yang terbatas, bukan jaminan password kuat, aman, unik, atau belum pernah bocor."
+}

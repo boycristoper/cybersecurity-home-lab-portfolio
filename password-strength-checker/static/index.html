@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10101a">
+  <title>Password Strength Checker — Password Lab</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Beranda Password Lab">
+        <span class="brand-icon" aria-hidden="true"><span></span></span>
+        <span>PASSWORD <strong>LAB</strong></span>
+      </a>
+      <div class="server-status status-waiting" id="server-status" role="status">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span id="server-label">Menghubungkan ke server lokal</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span aria-hidden="true"></span> MINI PROJECT CYBERSECURITY</p>
+          <h1 id="page-title">Kenali pola.<br><span>Perbaiki password.</span></h1>
+          <p class="hero-description">Password Strength Checker memberi alasan yang bisa kamu pelajari dari panjang dan pola password latihan.</p>
+        </div>
+        <div class="scope-card">
+          <span class="scope-symbol" aria-hidden="true">↳</span>
+          <div>
+            <p class="scope-title">Latihan lokal, alasan yang jelas</p>
+            <p>Diproses di server lokal Kali; tidak disimpan atau dikirim ke layanan eksternal.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="workspace">
+        <section class="panel input-panel" aria-labelledby="input-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">01 / MASUKKAN CONTOH</p>
+              <h2 id="input-title">Coba password latihan</h2>
+            </div>
+            <span class="small-tag">LOKAL</span>
+          </div>
+
+          <p class="input-intro">Gunakan password latihan, lalu lihat alasan penilaiannya. Password contoh di halaman ini bersifat publik.</p>
+          <form id="checker-form" autocomplete="off">
+            <div class="field-label-row">
+              <label for="password-input">Password latihan</label>
+              <span class="input-count" id="input-count">0 karakter NFC</span>
+            </div>
+            <div class="password-field">
+              <input id="password-input" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="input-help input-count" placeholder="Ketik contoh untuk dianalisis">
+              <button class="visibility-button" id="toggle-visibility" type="button" aria-pressed="false" aria-controls="password-input">Tampilkan</button>
+            </div>
+            <p class="field-help" id="input-help">Spasi dan Unicode boleh. Profil latihan: minimal <span id="minimum-length">15</span>, maksimal <span id="maximum-length">256</span> karakter setelah normalisasi NFC.</p>
+
+            <div class="form-actions">
+              <button class="button button-primary" id="check-button" type="submit"><span>Periksa password</span><span aria-hidden="true">↗</span></button>
+              <button class="button button-secondary" id="clear-button" type="button">Hapus input</button>
+            </div>
+            <p class="form-error" id="form-error" role="alert" hidden></p>
+          </form>
+
+          <div class="examples">
+            <div class="examples-heading">
+              <span class="section-kicker">ATAU PILIH CONTOH DUMMY</span>
+              <span aria-hidden="true">↓</span>
+            </div>
+            <div class="example-grid" role="group" aria-label="Contoh password publik untuk latihan">
+              <button type="button" class="example-button" data-demo="short"><span class="example-icon" aria-hidden="true">Aa</span><span>Contoh pendek</span><span aria-hidden="true">↗</span></button>
+              <button type="button" class="example-button" data-demo="repeat"><span class="example-icon" aria-hidden="true">↻</span><span>Contoh berulang</span><span aria-hidden="true">↗</span></button>
+              <button type="button" class="example-button" data-demo="sequence"><span class="example-icon" aria-hidden="true">123</span><span>Contoh pola</span><span aria-hidden="true">↗</span></button>
+              <button type="button" class="example-button" data-demo="phrase"><span class="example-icon" aria-hidden="true">…</span><span>Contoh frasa</span><span aria-hidden="true">↗</span></button>
+            </div>
+            <p class="example-note" id="example-note" role="status">Contoh hanya mengisi kolom. Tekan Periksa untuk menjalankan analisis.</p>
+          </div>
+
+          <div class="input-footer">
+            <span class="lock-mark" aria-hidden="true"></span>
+            <p>Input hanya dipakai selama pemeriksaan. Ringkasan hasil tidak memuat teks password.</p>
+          </div>
+        </section>
+
+        <section class="panel result-panel" id="result-panel" aria-labelledby="result-title" aria-busy="false">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">02 / PAHAMI HASILNYA</p>
+              <h2 id="result-title">Penilaian &amp; saran</h2>
+            </div>
+            <span class="result-marker" aria-hidden="true">◎</span>
+          </div>
+
+          <div class="empty-result" id="empty-result">
+            <div class="empty-orbit" aria-hidden="true"><span class="orbit-key">⌁</span><span class="orbit-dot"></span></div>
+            <h3>Mulai dari satu contoh.</h3>
+            <p>Hasil akan menjelaskan panjang, kecocokan dengan daftar kecil, pengulangan, dan urutan yang mudah ditebak.</p>
+            <div class="empty-rule-list" aria-hidden="true"><span>01 Panjang</span><span>02 Daftar lokal</span><span>03 Pengulangan</span><span>04 Urutan</span></div>
+          </div>
+
+          <div class="loading-result" id="loading-result" role="status" hidden>
+            <span class="loading-dot" aria-hidden="true"></span>
+            <p>Memeriksa aturan di server lokal…</p>
+          </div>
+
+          <div id="result-content" hidden>
+            <div class="assessment" id="assessment" data-status="review">
+              <div class="assessment-top">
+                <p class="assessment-label">HASIL PEMERIKSAAN TERBATAS</p>
+                <span class="length-badge"><strong id="result-length">—</strong> karakter</span>
+              </div>
+              <h3 id="result-label" tabindex="-1"></h3>
+              <ol class="category-scale" id="category-scale" aria-label="Kategori hasil">
+                <li data-category="needs_improvement"><span></span>Perlu diperbaiki</li>
+                <li data-category="review"><span></span>Perlu ditinjau</li>
+                <li data-category="limited_pass"><span></span>Lolos terbatas</li>
+              </ol>
+              <p id="result-notice"></p>
+            </div>
+
+            <div class="result-section">
+              <div class="result-section-heading"><h4>Hasil tiap aturan</h4><span>4 pemeriksaan lokal</span></div>
+              <ul class="check-list" id="check-list"></ul>
+            </div>
+
+            <div class="result-section" id="reasons-section">
+              <h4>Yang perlu diperhatikan</h4>
+              <ul class="text-list reasons-list" id="reason-list"></ul>
+            </div>
+
+            <div class="suggestions-card">
+              <div class="suggestion-icon" aria-hidden="true">↗</div>
+              <div><h4>Langkah perbaikan</h4><ul class="text-list" id="suggestion-list"></ul></div>
+            </div>
+
+            <button class="download-button" id="download-summary" type="button" disabled>Unduh ringkasan tanpa password <span aria-hidden="true">↓</span></button>
+          </div>
+        </section>
+      </div>
+
+      <section class="reading-panel" aria-labelledby="reading-title">
+        <div class="reading-intro"><p class="section-kicker">BELAJAR DARI HASIL</p><h2 id="reading-title">Panjang itu penting.<br>Alasan tetap perlu dibaca.</h2></div>
+        <div class="reading-details">
+          <details>
+            <summary>Apa arti tiga kategori hasil?</summary>
+            <p><strong>Perlu diperbaiki:</strong> ada indikator jelas dari aturan lokal. <strong>Perlu ditinjau:</strong> panjang cukup, tetapi pola tertentu masih terdeteksi. <strong>Lolos pemeriksaan terbatas:</strong> aturan ini tidak menemukan indikator; hasil ini belum membuktikan password aman atau belum pernah bocor.</p>
+          </details>
+          <details>
+            <summary>Kenapa minimal 15 karakter?</summary>
+            <p>Angka 15 digunakan sebagai profil latihan untuk login dengan password sebagai satu-satunya faktor. Ini bukan aturan universal setiap layanan atau sertifikasi. Huruf besar, angka, dan simbol tidak diwajibkan; spasi dan Unicode diterima.</p>
+          </details>
+          <details>
+            <summary>Apa arti NFC dan daftar lokal?</summary>
+            <p>NFC menormalkan bentuk Unicode sebelum panjang dihitung sebagai code point. Satu emoji dapat memakai lebih dari satu code point. Daftar lokal hanya berisi <span id="blocklist-size">beberapa</span> contoh umum dan membandingkan seluruh input; ini bukan pemeriksaan basis data kebocoran.</p>
+          </details>
+        </div>
+      </section>
+
+      <aside class="boundary-note"><span aria-hidden="true">i</span><p><strong>Batas proyek:</strong> alat ini memberi umpan balik dari aturan sederhana. Tidak menghitung waktu pembobolan, tidak menguji akun, dan tidak menjamin keamanan password.</p></aside>
+    </main>
+    <footer><span>Password Lab <span aria-hidden="true">/</span> Mini project cybersecurity</span><span>Python standar · Pemrosesan lokal</span></footer>
+  </div>
+</body>
+</html>

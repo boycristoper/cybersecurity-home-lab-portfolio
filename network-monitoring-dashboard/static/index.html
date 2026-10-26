@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1424">
+  <title>Network Monitoring Dashboard</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Beranda Network Monitoring Dashboard">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span>NET<span class="brand-accent">WATCH</span></span>
+      </a>
+      <div class="topbar-right">
+        <span class="mode-label">LAB LOKAL</span>
+        <span id="connection-status" class="status status-loading" role="status" aria-live="polite">
+          <span class="status-dot" aria-hidden="true"></span>
+          Menghubungkan
+        </span>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div>
+          <p class="eyebrow">OBSERVABILITAS JARINGAN</p>
+          <h1 id="page-title">Network Monitoring Dashboard</h1>
+          <p class="hero-description">Pantau volume lalu lintas dan aktivitas koneksi pada mesin yang menjalankan aplikasi ini.</p>
+        </div>
+        <div class="hero-control">
+          <label for="interface-select">Antarmuka yang dipantau</label>
+          <div class="select-wrap">
+            <select id="interface-select" disabled>
+              <option value="">Menunggu data...</option>
+            </select>
+          </div>
+          <p id="updated-at" class="updated-at">Belum ada pembacaan</p>
+        </div>
+      </section>
+
+      <div id="error-banner" class="error-banner" role="alert" hidden></div>
+
+      <section class="metric-grid" aria-label="Laju trafik antarmuka terpilih">
+        <article class="metric-card metric-card-rx">
+          <div class="metric-top"><span>DATA MASUK</span><span class="metric-icon" aria-hidden="true">↓</span></div>
+          <p id="rx-rate" class="metric-value">—</p>
+          <p class="metric-caption">Byte diterima per detik</p>
+        </article>
+        <article class="metric-card metric-card-tx">
+          <div class="metric-top"><span>DATA KELUAR</span><span class="metric-icon" aria-hidden="true">↑</span></div>
+          <p id="tx-rate" class="metric-value">—</p>
+          <p class="metric-caption">Byte dikirim per detik</p>
+        </article>
+        <article class="metric-card">
+          <div class="metric-top"><span>PAKET MASUK</span><span class="metric-icon" aria-hidden="true">↙</span></div>
+          <p id="rx-packets-rate" class="metric-value">—</p>
+          <p class="metric-caption">Paket diterima per detik</p>
+        </article>
+        <article class="metric-card">
+          <div class="metric-top"><span>PAKET KELUAR</span><span class="metric-icon" aria-hidden="true">↗</span></div>
+          <p id="tx-packets-rate" class="metric-value">—</p>
+          <p class="metric-caption">Paket dikirim per detik</p>
+        </article>
+      </section>
+
+      <section class="lower-grid">
+        <article class="panel chart-panel" aria-labelledby="chart-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">RIWAYAT SINGKAT</p>
+              <h2 id="chart-title">Laju data</h2>
+            </div>
+            <div class="legend" aria-label="Legenda grafik">
+              <span><i class="legend-dot legend-rx" aria-hidden="true"></i> Masuk</span>
+              <span><i class="legend-dot legend-tx" aria-hidden="true"></i> Keluar</span>
+            </div>
+          </div>
+          <div class="chart-container">
+            <canvas id="traffic-chart" role="img" aria-label="Grafik laju data masuk dan keluar pada antarmuka terpilih"></canvas>
+            <p id="chart-empty" class="chart-empty">Mengumpulkan baseline lalu lintas...</p>
+          </div>
+          <div class="chart-foot"><span>Sampel terbaru di sebelah kanan</span><span id="chart-range">Belum ada riwayat</span></div>
+        </article>
+
+        <article class="panel socket-panel" aria-labelledby="socket-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">AKTIVITAS SISTEM</p>
+              <h2 id="socket-title">Soket saat ini</h2>
+            </div>
+          </div>
+          <div class="socket-list">
+            <div class="socket-row"><span><i class="socket-indicator established" aria-hidden="true"></i>TCP terhubung</span><strong id="tcp-established">—</strong></div>
+            <div class="socket-row"><span><i class="socket-indicator listening" aria-hidden="true"></i>TCP menunggu</span><strong id="tcp-listening">—</strong></div>
+            <div class="socket-row"><span><i class="socket-indicator udp" aria-hidden="true"></i>Soket UDP</span><strong id="udp-sockets">—</strong></div>
+          </div>
+          <p class="panel-note">Angka ini adalah jumlah soket pada saat pembacaan, bukan jumlah serangan atau pengguna.</p>
+        </article>
+      </section>
+
+      <section class="table-grid">
+        <article class="panel" aria-labelledby="interface-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">SEMUA ANTARMUKA</p>
+              <h2 id="interface-title">Ringkasan trafik</h2>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th scope="col">Antarmuka</th><th scope="col">Masuk / detik</th><th scope="col">Keluar / detik</th><th scope="col">Galat / hilang (total)</th></tr></thead>
+              <tbody id="interface-rows"><tr><td colspan="4" class="empty-cell">Menunggu data antarmuka...</td></tr></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="panel" aria-labelledby="connection-title">
+          <div class="panel-heading">
+            <div>
+              <p class="section-kicker">RINGKASAN KONEKSI</p>
+              <h2 id="connection-title">Protokol &amp; status</h2>
+            </div>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th scope="col">Protokol</th><th scope="col">Status</th><th scope="col">Jumlah</th></tr></thead>
+              <tbody id="connection-rows"><tr><td colspan="3" class="empty-cell">Menunggu data koneksi...</td></tr></tbody>
+            </table>
+          </div>
+          <p class="panel-note">Alamat IP, port, nama host, dan isi paket sengaja tidak ditampilkan.</p>
+        </article>
+      </section>
+
+      <aside class="scope-note" aria-label="Cara membaca data">
+        <div class="scope-icon" aria-hidden="true">i</div>
+        <p><strong>Cara membaca:</strong> laju dihitung dari selisih penghitung sistem antar pembacaan. Pembacaan pertama memerlukan baseline. Nilai nol berarti tidak ada perubahan selama interval itu; tanda garis berarti laju belum dapat dihitung. Galat dan paket hilang adalah total penghitung saat ini. Dashboard ini memantau mesin lokal, tidak menganalisis isi paket atau menilai apakah trafik berbahaya.</p>
+      </aside>
+    </main>
+
+    <footer>Network Monitoring Dashboard <span aria-hidden="true">·</span> Mini project cybersecurity</footer>
+  </div>
+</body>
+</html>
